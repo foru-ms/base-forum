@@ -9,6 +9,7 @@ import { ForumAPI } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { Check } from "lucide-react"
+import { useAuthDialog } from "@/lib/auth-dialog-context"
 
 interface PollWidgetProps {
   threadId: string
@@ -16,7 +17,8 @@ interface PollWidgetProps {
 }
 
 export function PollWidget({ threadId, poll }: PollWidgetProps) {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
+  const { openAuthDialog } = useAuthDialog()
   const { toast } = useToast()
   const [pollResults, setPollResults] = useState<any>(null)
   const [selectedOption, setSelectedOption] = useState<string>("")
@@ -46,7 +48,11 @@ export function PollWidget({ threadId, poll }: PollWidgetProps) {
   }
 
   const handleVote = async () => {
-    if (!token || !selectedOption) return
+    if (!token) {
+      openAuthDialog()
+      return
+    }
+    if (!selectedOption) return
 
     setIsVoting(true)
     try {
@@ -130,6 +136,7 @@ export function PollWidget({ threadId, poll }: PollWidgetProps) {
                 </div>
               ))}
             </RadioGroup>
+            {!token && <p className="text-sm text-muted-foreground">Sign in to vote in this poll</p>}
             <div className="flex gap-2">
               <Button onClick={handleVote} disabled={!selectedOption || isVoting} className="flex-1">
                 {isVoting ? "Voting..." : hasVoted ? "Update Vote" : "Cast Vote"}

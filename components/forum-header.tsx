@@ -16,12 +16,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Bell, MessageSquare, Search, Settings, LogOut, User, Shield } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
-import { AuthDialog } from "./auth-dialog"
+import { useAuthDialog } from "@/lib/auth-dialog-context"
 
 export function ForumHeader() {
   const { user, logout } = useAuth()
+  const { openAuthDialog } = useAuthDialog()
   const router = useRouter()
-  const [authOpen, setAuthOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
   const handleSearch = (e: React.FormEvent) => {
@@ -110,13 +110,12 @@ export function ForumHeader() {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={() => setAuthOpen(true)} size="sm">
+            <Button onClick={openAuthDialog} size="sm">
               Sign In
             </Button>
           )}
         </div>
       </div>
-      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
     </>
   )
 }

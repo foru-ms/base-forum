@@ -14,13 +14,17 @@ import { formatDistanceToNow } from "date-fns"
 import { useRouter } from "next/navigation"
 import { PollWidget } from "@/components/poll-widget"
 import { ForumHeader } from "@/components/forum-header"
+import { useToast } from "@/components/ui/use-toast"
+import { useAuthDialog } from "@/lib/auth-dialog-context"
 
 export function ThreadContent({ threadId }: { threadId: string }) {
   const router = useRouter()
   const { user, token } = useAuth()
+  const { openAuthDialog } = useAuthDialog()
   const [thread, setThread] = useState<any>(null)
   const [posts, setPosts] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { toast } = useToast()
 
   const loadThread = async () => {
     setIsLoading(true)
@@ -45,7 +49,10 @@ export function ThreadContent({ threadId }: { threadId: string }) {
   }, [threadId])
 
   const handleLike = async () => {
-    if (!token) return
+    if (!token) {
+      openAuthDialog()
+      return
+    }
     try {
       const hasLiked = thread.likes?.some((l: any) => l.userId === user?.id && !l.dislike)
       await ForumAPI.likeThread(threadId, hasLiked, token)
@@ -56,7 +63,10 @@ export function ThreadContent({ threadId }: { threadId: string }) {
   }
 
   const handleDislike = async () => {
-    if (!token) return
+    if (!token) {
+      openAuthDialog()
+      return
+    }
     try {
       const hasDisliked = thread.likes?.some((l: any) => l.userId === user?.id && l.dislike)
       await ForumAPI.dislikeThread(threadId, hasDisliked, token)
@@ -182,8 +192,13 @@ export function ThreadContent({ threadId }: { threadId: string }) {
           </div>
 
           {posts.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <p>No replies yet. Be the first to respond!</p>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No replies yet. Be the first to respond!</p>
+              {!user && (
+                <Button variant="outline" onClick={openAuthDialog}>
+                  Sign in to reply
+                </Button>
+              )}
             </div>
           )}
         </div>

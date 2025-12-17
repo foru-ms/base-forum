@@ -8,6 +8,7 @@ import { MoreVertical, Flag, CheckCircle, Heart, ThumbsDown } from "lucide-react
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { formatDistanceToNow } from "date-fns"
 import { useAuth } from "@/lib/auth-context"
+import { useAuthDialog } from "@/lib/auth-dialog-context"
 import { ForumAPI } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 
@@ -43,6 +44,7 @@ export function PostCard({
   isThreadOwner?: boolean
 }) {
   const { user, token } = useAuth()
+  const { openAuthDialog } = useAuthDialog()
   const { toast } = useToast()
   const [isVoting, setIsVoting] = useState(false)
 
@@ -52,7 +54,11 @@ export function PostCard({
   const hasDisliked = post.likes?.some((l) => l.userId === user?.id && l.dislike)
 
   const handleLike = async () => {
-    if (!token || isVoting) return
+    if (!token) {
+      openAuthDialog()
+      return
+    }
+    if (isVoting) return
     setIsVoting(true)
     try {
       await ForumAPI.likePost(post.id, hasLiked, token)
@@ -65,7 +71,11 @@ export function PostCard({
   }
 
   const handleDislike = async () => {
-    if (!token || isVoting) return
+    if (!token) {
+      openAuthDialog()
+      return
+    }
+    if (isVoting) return
     setIsVoting(true)
     try {
       await ForumAPI.dislikePost(post.id, hasDisliked, token)

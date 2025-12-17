@@ -9,11 +9,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/lib/auth-context"
+import { useAuthDialog } from "@/lib/auth-dialog-context"
 import { useToast } from "@/hooks/use-toast"
 import { ForumAPI } from "@/lib/api"
 
-export function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+export function AuthDialog() {
   const { login, register } = useAuth()
+  const { isOpen, closeAuthDialog } = useAuthDialog()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
@@ -31,7 +33,7 @@ export function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange
     setIsLoading(true)
     try {
       await login(loginData.login, loginData.password)
-      onOpenChange(false)
+      closeAuthDialog()
       toast({ title: "Welcome back!", description: "You have successfully logged in." })
     } catch (error) {
       toast({ title: "Login failed", description: "Invalid credentials", variant: "destructive" })
@@ -45,7 +47,7 @@ export function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange
     setIsLoading(true)
     try {
       await register(registerData)
-      onOpenChange(false)
+      closeAuthDialog()
       toast({ title: "Account created!", description: "Welcome to the forum." })
     } catch (error) {
       toast({ title: "Registration failed", description: "Please try again", variant: "destructive" })
@@ -77,7 +79,7 @@ export function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={closeAuthDialog}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{showForgotPassword ? "Reset Password" : "Join the Community"}</DialogTitle>
