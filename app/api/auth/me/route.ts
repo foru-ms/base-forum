@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.FORU_MS_API_URL
@@ -8,7 +11,7 @@ export async function GET(request: NextRequest) {
     const token = request.headers.get("authorization")?.replace("Bearer ", "")
 
     if (!token) {
-      return NextResponse.json({ error: "No token provided" }, { status: 401 })
+      return NextResponse.json({ error: "No token provided" }, { status: 401, headers: { "Cache-Control": "no-store" } })
     }
 
     const res = await fetch(`${API_URL}/auth/me`, {
@@ -21,12 +24,12 @@ export async function GET(request: NextRequest) {
 
     if (!res.ok) {
       const error = await res.text()
-      return NextResponse.json({ error: "Failed to fetch user", details: error }, { status: res.status })
+      return NextResponse.json({ error: "Failed to fetch user", details: error }, { status: res.status, headers: { "Cache-Control": "no-store" } })
     }
 
     const data = await res.json()
-    return NextResponse.json(data)
+    return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } })
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch user", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Failed to fetch user", details: String(error) }, { status: 500, headers: { "Cache-Control": "no-store" } })
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import type { KeyboardEvent, MouseEvent } from "react"
+import React, { memo, type KeyboardEvent, type MouseEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -32,7 +32,7 @@ interface Thread {
   }
 }
 
-export function ThreadCard({ thread }: { thread: Thread }) {
+function ThreadCardComponent({ thread }: { thread: Thread }) {
   const router = useRouter()
   const postsCount = thread._count?.Post || thread._count?.posts || thread.Post?.length || thread.posts?.length || 0
   const likesCount = thread.likes?.filter((l) => !l.dislike).length || 0
@@ -87,12 +87,13 @@ export function ThreadCard({ thread }: { thread: Thread }) {
             <span
               role="link"
               tabIndex={0}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              aria-label={`View ${thread.user.username}'s profile`}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full"
               onClick={navigateToUser}
               onKeyDown={handleUserKeyDown}
             >
               <Avatar className="h-6 w-6">
-                <AvatarImage src={thread.user.avatar || "/placeholder.svg"} />
+                <AvatarImage src={thread.user.avatar || "/placeholder.svg"} alt={`${thread.user.username} avatar`} />
                 <AvatarFallback>{thread.user.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <span className="text-muted-foreground">{thread.user.username}</span>
@@ -117,3 +118,5 @@ export function ThreadCard({ thread }: { thread: Thread }) {
     </Card>
   )
 }
+
+export const ThreadCard = memo(ThreadCardComponent)

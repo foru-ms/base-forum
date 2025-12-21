@@ -122,7 +122,7 @@ export function UserProfileContent({ userId }: { userId: string }) {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={user.image || "/placeholder.svg"} />
+                    <AvatarImage src={user.image || "/placeholder.svg"} alt={`${user.username} avatar`} />
                     <AvatarFallback className="text-2xl">{user.username[0].toUpperCase()}</AvatarFallback>
                   </Avatar>
                   <div>
@@ -200,7 +200,7 @@ export function UserProfileContent({ userId }: { userId: string }) {
                       <CardContent className="pt-6">
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={follower.follower?.image || "/placeholder.svg"} />
+                            <AvatarImage src={follower.follower?.image || "/placeholder.svg"} alt={`${follower.follower?.username || "User"} avatar`} />
                             <AvatarFallback>{follower.follower?.username?.[0]?.toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
@@ -228,7 +228,7 @@ export function UserProfileContent({ userId }: { userId: string }) {
                       <CardContent className="pt-6">
                         <div className="flex items-center gap-3">
                           <Avatar>
-                            <AvatarImage src={follow.following?.image || "/placeholder.svg"} />
+                            <AvatarImage src={follow.following?.image || "/placeholder.svg"} alt={`${follow.following?.username || "User"} avatar`} />
                             <AvatarFallback>{follow.following?.username?.[0]?.toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1">

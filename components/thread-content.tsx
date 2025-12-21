@@ -121,7 +121,7 @@ export function ThreadContent({ threadId }: { threadId: string }) {
           <CardHeader>
             <div className="flex items-start gap-3 mb-4">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={thread.user?.avatar || "/placeholder.svg"} />
+                <AvatarImage src={thread.user?.avatar || "/placeholder.svg"} alt={`${thread.user?.username || "User"} avatar`} />
                 <AvatarFallback>{thread.user?.username?.[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1">

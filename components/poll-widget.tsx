@@ -34,7 +34,7 @@ export function PollWidget({ threadId, poll }: PollWidgetProps) {
 
   const loadPollResults = async () => {
     try {
-      const results = await ForumAPI.getPollResults(threadId, token)
+      const results = await ForumAPI.getPollResults(threadId, token ?? undefined)
       setPollResults(results)
 
       // Check if user has already voted

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState, memo } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
@@ -32,7 +32,7 @@ interface Post {
   }>
 }
 
-export function PostCard({
+function PostCardComponent({
   post,
   onReply,
   onUpdate,
@@ -50,8 +50,8 @@ export function PostCard({
 
   const likesCount = post.likes?.filter((l) => !l.dislike).length || 0
   const dislikesCount = post.likes?.filter((l) => l.dislike).length || 0
-  const hasLiked = post.likes?.some((l) => l.userId === user?.id && !l.dislike)
-  const hasDisliked = post.likes?.some((l) => l.userId === user?.id && l.dislike)
+  const hasLiked = !!post.likes?.some((l) => l.userId === user?.id && !l.dislike)
+  const hasDisliked = !!post.likes?.some((l) => l.userId === user?.id && l.dislike)
 
   const handleLike = async () => {
     if (!token) {
@@ -126,7 +126,7 @@ export function PostCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={post.user?.avatar || "/placeholder.svg"} />
+              <AvatarImage src={post.user?.avatar || "/placeholder.svg"} alt={`${post.user?.username || "User"} avatar`} />
               <AvatarFallback>{post.user?.username?.[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
@@ -184,3 +184,5 @@ export function PostCard({
     </Card>
   )
 }
+
+export const PostCard = memo(PostCardComponent)

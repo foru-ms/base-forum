@@ -13,9 +13,23 @@ import { useAuthDialog } from "@/lib/auth-dialog-context"
 import { useToast } from "@/hooks/use-toast"
 import { ForumAPI } from "@/lib/api"
 
-export function AuthDialog() {
+interface AuthDialogProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export function AuthDialog({ open, onOpenChange }: AuthDialogProps = {}) {
   const { login, register } = useAuth()
   const { isOpen, closeAuthDialog } = useAuthDialog()
+    const isControlled = typeof open === "boolean"
+    const dialogOpen = isControlled ? open! : isOpen
+    const handleOpenChange = (next: boolean) => {
+      if (isControlled) {
+        onOpenChange?.(next)
+      } else {
+        if (!next) closeAuthDialog()
+      }
+    }
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
@@ -33,7 +47,8 @@ export function AuthDialog() {
     setIsLoading(true)
     try {
       await login(loginData.login, loginData.password)
-      closeAuthDialog()
+      if (isControlled) onOpenChange?.(false)
+      else closeAuthDialog()
       toast({ title: "Welcome back!", description: "You have successfully logged in." })
     } catch (error) {
       toast({ title: "Login failed", description: "Invalid credentials", variant: "destructive" })
@@ -47,7 +62,8 @@ export function AuthDialog() {
     setIsLoading(true)
     try {
       await register(registerData)
-      closeAuthDialog()
+      if (isControlled) onOpenChange?.(false)
+      else closeAuthDialog()
       toast({ title: "Account created!", description: "Welcome to the forum." })
     } catch (error) {
       toast({ title: "Registration failed", description: "Please try again", variant: "destructive" })
@@ -79,7 +95,7 @@ export function AuthDialog() {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeAuthDialog}>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{showForgotPassword ? "Reset Password" : "Join the Community"}</DialogTitle>

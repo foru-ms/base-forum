@@ -1,3 +1,5 @@
+export const revalidate = 60
+
 import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.FORU_MS_API_URL
@@ -28,7 +30,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         "x-api-key": API_KEY!,
       },
-      cache: "no-store",
+      next: { revalidate },
     })
 
     if (!res.ok) {
@@ -38,7 +40,9 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await res.json()
-    return NextResponse.json(data)
+    return NextResponse.json(data, {
+      headers: { "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=${revalidate}` },
+    })
   } catch (error) {
     console.error("[v0] Threads API exception:", error)
     return NextResponse.json({ error: "Failed to fetch threads", details: String(error) }, { status: 500 })

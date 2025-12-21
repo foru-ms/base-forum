@@ -1,3 +1,5 @@
+export const revalidate = 300
+
 import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.FORU_MS_API_URL
@@ -10,7 +12,7 @@ export async function GET() {
         "Content-Type": "application/json",
         "x-api-key": API_KEY!,
       },
-      cache: "no-store",
+      next: { revalidate },
     })
 
     if (!res.ok) {
@@ -19,7 +21,9 @@ export async function GET() {
     }
 
     const data = await res.json()
-    return NextResponse.json(data)
+    return NextResponse.json(data, {
+      headers: { "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=${revalidate}` },
+    })
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch tags", details: String(error) }, { status: 500 })
   }

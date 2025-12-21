@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { type NextRequest, NextResponse } from "next/server"
 
 const API_URL = process.env.FORU_MS_API_URL
@@ -23,9 +26,9 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await res.json()
-    return NextResponse.json(data)
+    return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } })
   } catch (error) {
     console.error("[v0] Login API exception:", error)
-    return NextResponse.json({ error: "Login failed", details: String(error) }, { status: 500 })
+    return NextResponse.json({ error: "Login failed", details: String(error) }, { status: 500, headers: { "Cache-Control": "no-store" } })
   }
 }

@@ -119,7 +119,7 @@ export default function SearchPage() {
                             <Card className="hover:border-primary/50 transition-colors cursor-pointer">
                               <CardContent className="py-4 flex items-center gap-3">
                                 <Avatar>
-                                  <AvatarImage src={user.image || "/placeholder.svg"} />
+                                  <AvatarImage src={user.image || "/placeholder.svg"} alt={`${user.username} avatar`} />
                                   <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                                 </Avatar>
                                 <div>
@@ -219,7 +219,7 @@ export default function SearchPage() {
                         <Card className="hover:border-primary/50 transition-colors cursor-pointer">
                           <CardContent className="py-4 flex items-center gap-3">
                             <Avatar>
-                              <AvatarImage src={user.image || "/placeholder.svg"} />
+                              <AvatarImage src={user.image || "/placeholder.svg"} alt={`${user.username} avatar`} />
                               <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>
