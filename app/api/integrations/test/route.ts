@@ -4,7 +4,7 @@ import { getServerForumClient } from "@/lib/forum-client"
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get("Authorization")?.replace("Bearer ", "")
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
     const body = await request.json()
 
     if (!token) {

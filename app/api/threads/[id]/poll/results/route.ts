@@ -5,7 +5,7 @@ import { getServerForumClient } from "@/lib/forum-client"
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const token = request.headers.get("Authorization")?.replace("Bearer ", "")
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
 
     const client = getServerForumClient(token || undefined)
     const data = await client.threads.getPoll(id)

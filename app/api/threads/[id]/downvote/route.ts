@@ -5,7 +5,7 @@ import { getServerForumClient } from "@/lib/forum-client"
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const token = request.headers.get("Authorization")?.replace("Bearer ", "")
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
     const body = await request.json().catch(() => ({}))
 
     if (!token) {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const token = request.headers.get("Authorization")?.replace("Bearer ", "")
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
 
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

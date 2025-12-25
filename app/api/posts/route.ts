@@ -5,16 +5,11 @@ import { getServerForumClient } from "@/lib/forum-client"
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const params = new URLSearchParams()
-
-    if (searchParams.get("threadId")) params.append("threadId", searchParams.get("threadId")!)
-    if (searchParams.get("userId")) params.append("userId", searchParams.get("userId")!)
-    if (searchParams.get("page")) params.append("page", searchParams.get("page")!)
-    if (searchParams.get("limit")) params.append("limit", searchParams.get("limit")!)
 
     const client = getServerForumClient()
     const data = await client.posts.list({
       ...(searchParams.get("threadId") && { threadId: searchParams.get("threadId")! }),
+      ...(searchParams.get("userId") && { userId: searchParams.get("userId")! }),
       ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
       ...(searchParams.get("limit") && { limit: parseInt(searchParams.get("limit")!) }),
       ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),

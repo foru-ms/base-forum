@@ -5,11 +5,6 @@ import { getServerForumClient } from "@/lib/forum-client"
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const params = new URLSearchParams()
-
-    if (searchParams.get("page")) params.append("page", searchParams.get("page")!)
-    if (searchParams.get("limit")) params.append("limit", searchParams.get("limit")!)
-    if (searchParams.get("search")) params.append("search", searchParams.get("search")!)
 
     const client = getServerForumClient()
     const data = await client.users.list({

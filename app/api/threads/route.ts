@@ -14,22 +14,13 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get("userId")
     const pinned = searchParams.get("pinned")
 
-    const params = new URLSearchParams({
-      filter,
-      page,
-      limit,
-    })
-
-    if (tagId) params.append("tagId", tagId)
-    if (userId) params.append("userId", userId)
-    if (pinned) params.append("pinned", pinned)
-
     const client = getServerForumClient()
     const data = await client.threads.list({
       limit: parseInt(limit),
       filter: filter as 'newest' | 'oldest',
       ...(tagId && { tagId }),
       ...(userId && { userId }),
+      ...(pinned && { pinned: pinned === 'true' }),
     })
     return NextResponse.json(data, {
       headers: { "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=${revalidate}` },
