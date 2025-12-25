@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,20 +11,8 @@ export async function GET(request: NextRequest) {
     if (searchParams.get("limit")) params.append("limit", searchParams.get("limit")!)
     if (searchParams.get("search")) params.append("search", searchParams.get("search")!)
 
-    const res = await fetch(`${API_URL}/users?${params.toString()}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY!,
-      },
-      cache: "no-store",
-    })
-
-    if (!res.ok) {
-      const error = await res.text()
-      return NextResponse.json({ error: "Failed to fetch users", details: error }, { status: res.status })
-    }
-
-    const data = await res.json()
+    const client = getServerForumClient()
+    const data = await client.request(`/users?${params.toString()}`, { method: "GET", cache: "no-store" } as any)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch users", details: String(error) }, { status: 500 })

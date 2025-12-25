@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -12,20 +11,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const response = await fetch(`${API_URL}/notification/${id}/read`, {
-      method: "PUT",
-      headers: {
-        "x-api-key": API_KEY!,
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      return NextResponse.json({ error: error.message || "Failed to mark as read" }, { status: response.status })
-    }
-
-    const data = await response.json()
+    const client = getServerForumClient(token)
+    const data = await client.request(`/notification/${id}/read`, { method: "PUT" })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Mark notification read error:", error)

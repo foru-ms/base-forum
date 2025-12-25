@@ -12,3 +12,7 @@ To learn more about Foru.ms, take a look at the following resources:
 - [Blog](https://foru.ms/blog) - read the latest news and updates.
 - [GitHub](https://github.com/foru-ms) - check out the repositories.
 - [Support](https://foru.ms/support) - get support.
+
+## @foru-ms/sdk Reference
+
+See [@foru-ms/sdk](https://www.npmjs.com/package/@foru-ms/sdk) for a API reference and usage examples.

@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,18 +11,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const response = await fetch(`${API_URL}/integrations/test`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY!,
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    })
-
-    const data = await response.json()
-    return NextResponse.json(data, { status: response.status })
+    const client = getServerForumClient(token)
+    const data = await client.request("/integrations/test", { method: "POST", body: JSON.stringify(body) })
+    return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to test integration" }, { status: 500 })
   }

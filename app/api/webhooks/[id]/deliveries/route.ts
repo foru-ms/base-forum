@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,18 +13,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const url = new URL(`${API_URL}/webhooks/${id}/deliveries`)
+    const url = new URL(`/webhooks/${id}/deliveries`, "http://internal")
     if (cursor) url.searchParams.set("cursor", cursor)
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        "x-api-key": API_KEY!,
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    const data = await response.json()
-    return NextResponse.json(data, { status: response.status })
+    const client = getServerForumClient(token)
+    const data = await client.request(`${url.pathname}${url.search}`, { method: "GET" })
+    return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch webhook deliveries" }, { status: 500 })
   }

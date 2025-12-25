@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ForumHeader } from "@/components/forum-header"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,6 +21,12 @@ export default function SettingsPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    if (!user || !token) {
+      router.replace("/")
+    }
+  }, [user, token, router])
+
   const [profileData, setProfileData] = useState({
     displayName: user?.displayName || "",
     bio: user?.bio || "",
@@ -33,10 +39,7 @@ export default function SettingsPage() {
     confirmPassword: "",
   })
 
-  if (!user || !token) {
-    router.push("/")
-    return null
-  }
+  if (!user || !token) return null
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault()

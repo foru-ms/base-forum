@@ -2,8 +2,7 @@ export const revalidate = 60
 
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,21 +24,11 @@ export async function GET(request: NextRequest) {
     if (userId) params.append("userId", userId)
     if (pinned) params.append("pinned", pinned)
 
-    const res = await fetch(`${API_URL}/threads?${params.toString()}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY!,
-      },
+    const client = getServerForumClient()
+    const data = await client.request(`/threads?${params.toString()}`, {
+      method: "GET",
       next: { revalidate },
-    })
-
-    if (!res.ok) {
-      const error = await res.text()
-      console.error("[v0] Threads API error:", res.status, error)
-      return NextResponse.json({ error: "Failed to fetch threads", details: error }, { status: res.status })
-    }
-
-    const data = await res.json()
+    } as any)
     return NextResponse.json(data, {
       headers: { "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=${revalidate}` },
     })
@@ -59,23 +48,8 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
 
-    const res = await fetch(`${API_URL}/thread`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    })
-
-    const responseText = await res.text()
-
-    if (!res.ok) {
-      console.error(`[SERVER] fetch to ${API_URL}/thread failed with status ${res.status} and body: ${responseText}`)
-      return NextResponse.json({ error: "Failed to create thread", details: responseText }, { status: res.status })
-    }
-
-    const data = JSON.parse(responseText)
+    const client = getServerForumClient(token)
+    const data = await client.threads.create(body)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[SERVER] Create thread API exception:", error)

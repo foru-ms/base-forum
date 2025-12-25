@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -15,21 +14,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const queryString = queryParams.toString() ? `?${queryParams.toString()}` : ""
 
-    const res = await fetch(`${API_URL}/thread/${id}/posts${queryString}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY!,
-      },
-      cache: "no-store",
-    })
-
-    if (!res.ok) {
-      const error = await res.text()
-      console.error(`[SERVER] Failed to fetch posts for thread ${id}:`, error)
-      return NextResponse.json({ error: "Failed to fetch posts", details: error }, { status: res.status })
-    }
-
-    const data = await res.json()
+    const client = getServerForumClient()
+    const data = await client.request(`/thread/${id}/posts${queryString}`, { method: "GET", cache: "no-store" } as any)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[SERVER] Error fetching thread posts:", error)

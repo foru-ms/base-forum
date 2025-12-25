@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -12,20 +11,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
 
-    const res = await fetch(`${API_URL}/report/${id}`, {
-      headers: {
-        "x-api-key": API_KEY!,
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    })
-
-    if (!res.ok) {
-      const error = await res.text()
-      return NextResponse.json({ error: "Failed to fetch report", details: error }, { status: res.status })
-    }
-
-    const data = await res.json()
+    const client = getServerForumClient(token)
+    const data = await client.request(`/report/${id}`, { method: "GET", cache: "no-store" } as any)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch report", details: String(error) }, { status: 500 })
@@ -43,22 +30,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const body = await request.json()
 
-    const res = await fetch(`${API_URL}/report/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY!,
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (!res.ok) {
-      const error = await res.text()
-      return NextResponse.json({ error: "Failed to update report", details: error }, { status: res.status })
-    }
-
-    const data = await res.json()
+    const client = getServerForumClient(token)
+    const data = await client.request(`/report/${id}`, { method: "PUT", body: JSON.stringify(body) })
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to update report", details: String(error) }, { status: 500 })
@@ -73,20 +46,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     if (!token) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
-
-    const res = await fetch(`${API_URL}/report/${id}`, {
-      method: "DELETE",
-      headers: {
-        "x-api-key": API_KEY!,
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (!res.ok) {
-      const error = await res.text()
-      return NextResponse.json({ error: "Failed to delete report", details: error }, { status: res.status })
-    }
-
+    const client = getServerForumClient(token)
+    await client.request(`/report/${id}`, { method: "DELETE" })
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete report", details: String(error) }, { status: 500 })

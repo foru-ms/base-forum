@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.FORU_MS_API_URL
-const API_KEY = process.env.FORU_MS_API_KEY
+import { getServerForumClient } from "@/lib/forum-client"
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -13,17 +12,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const response = await fetch(`${API_URL}/thread/${id}/downvotes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    })
-
-    const data = await response.json()
-    return NextResponse.json(data, { status: response.status })
+    const client = getServerForumClient(token)
+    const data = await client.request(`/thread/${id}/downvotes`, { method: "POST", body: JSON.stringify(body) })
+    return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to downvote thread" }, { status: 500 })
   }
@@ -38,15 +29,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const response = await fetch(`${API_URL}/thread/${id}/downvotes`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    const data = await response.json()
-    return NextResponse.json(data, { status: response.status })
+    const client = getServerForumClient(token)
+    const data = await client.request(`/thread/${id}/downvotes`, { method: "DELETE" })
+    return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove downvote" }, { status: 500 })
   }
