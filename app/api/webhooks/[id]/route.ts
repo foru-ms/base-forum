@@ -12,7 +12,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    await client.request(`/webhooks/${id}`, { method: "DELETE" })
+    await client.webhooks.delete(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete webhook", details: String(error) }, { status: 500 })

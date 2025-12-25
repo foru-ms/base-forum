@@ -12,7 +12,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const client = getServerForumClient(token)
-    const data = await client.posts.dislike(id)
+    const user = await client.auth.me()
+    const data = await client.posts.dislike(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to dislike post" }, { status: 500 })
@@ -29,7 +30,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/post/${id}/dislikes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.posts.undislike(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove dislike" }, { status: 500 })

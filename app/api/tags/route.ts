@@ -7,7 +7,7 @@ import { getServerForumClient } from "@/lib/forum-client"
 export async function GET() {
   try {
     const client = getServerForumClient()
-    const data = await client.request("/tags", { method: "GET", next: { revalidate } } as any)
+    const data = await client.tags.list()
     return NextResponse.json(data, {
       headers: { "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=${revalidate}` },
     })
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const client = getServerForumClient(token)
-    const data = await client.request("/tags", { method: "POST", body: JSON.stringify(body) })
+    const data = await client.tags.create(body)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to create tag", details: String(error) }, { status: 500 })

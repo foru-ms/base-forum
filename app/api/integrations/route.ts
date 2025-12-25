@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request("/integrations", { method: "GET" })
+    const data = await client.integrations.list()
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Integrations API error:", error)
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const client = getServerForumClient(token)
-    const data = await client.request("/integrations", { method: "POST", body: JSON.stringify(body) })
+    const data = await client.integrations.create(body)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Create integration error:", error)

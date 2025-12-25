@@ -13,7 +13,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/dislikes`, { method: "POST", body: JSON.stringify(body) })
+    const user = await client.auth.me()
+    const data = await client.threads.dislike(id, user.id, body.extendedData)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to dislike thread" }, { status: 500 })
@@ -30,7 +31,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/dislikes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.threads.undislike(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove dislike" }, { status: 500 })

@@ -11,7 +11,11 @@ export async function GET(request: NextRequest) {
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request("/roles", { method: "GET" })
+    const searchParams = request.nextUrl.searchParams
+    const data = await client.roles.list({
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Roles API error:", error)
@@ -30,7 +34,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const client = getServerForumClient(token)
-    const data = await client.request("/roles", { method: "POST", body: JSON.stringify(body) })
+    const data = await client.roles.create(body)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Create role error:", error)

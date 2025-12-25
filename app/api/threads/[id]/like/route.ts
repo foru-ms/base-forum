@@ -13,7 +13,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     const body = await request.json().catch(() => ({}))
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/likes`, { method: "POST", body: JSON.stringify(body) })
+    const user = await client.auth.me()
+    const data = await client.threads.like(id, user.id, body.extendedData)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to like thread", details: String(error) }, { status: 500 })
@@ -30,7 +31,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/likes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.threads.unlike(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove like", details: String(error) }, { status: 500 })

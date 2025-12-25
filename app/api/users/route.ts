@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
     if (searchParams.get("search")) params.append("search", searchParams.get("search")!)
 
     const client = getServerForumClient()
-    const data = await client.request(`/users?${params.toString()}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.users.list({
+      ...(searchParams.get("search") && { query: searchParams.get("search")! }),
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch users", details: String(error) }, { status: 500 })

@@ -12,7 +12,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const client = getServerForumClient(token)
-    const data = await client.posts.like(id)
+    const user = await client.auth.me()
+    const data = await client.posts.like(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to like post", details: String(error) }, { status: 500 })
@@ -29,7 +30,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/post/${id}/likes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.posts.unlike(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove like", details: String(error) }, { status: 500 })

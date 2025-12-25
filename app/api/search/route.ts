@@ -5,10 +5,19 @@ import { getServerForumClient } from "@/lib/forum-client"
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const queryString = searchParams.toString()
+    const query = searchParams.get("query")
+    const type = searchParams.get("type")
+
+    if (!query || !type) {
+      return NextResponse.json({ error: "Query and type are required" }, { status: 400 })
+    }
 
     const client = getServerForumClient()
-    const data = await client.request(`/search?${queryString}`, { method: "GET" })
+    const data = await client.search.search({
+      query,
+      type: type as 'threads' | 'posts' | 'users' | 'tags',
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Search API error:", error)

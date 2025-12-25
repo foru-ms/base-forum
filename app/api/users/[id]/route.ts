@@ -7,7 +7,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params
 
     const client = getServerForumClient()
-    const data = await client.request(`/user/${id}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.users.retrieve(id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch user", details: String(error) }, { status: 500 })
@@ -26,7 +26,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const body = await request.json()
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/user/${id}`, { method: "PUT", body: JSON.stringify(body) })
+    const data = await client.users.update(id, body)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to update user", details: String(error) }, { status: 500 })
@@ -42,7 +42,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
     const client = getServerForumClient(token)
-    await client.request(`/user/${id}`, { method: "DELETE" })
+    await client.users.delete(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete user", details: String(error) }, { status: 500 })

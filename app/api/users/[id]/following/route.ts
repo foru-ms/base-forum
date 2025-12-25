@@ -10,13 +10,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const cursor = searchParams.get("cursor")
     const filter = searchParams.get("filter")
 
-    const url = new URL(`/user/${id}/following`, "http://internal")
-    if (query) url.searchParams.set("query", query)
-    if (cursor) url.searchParams.set("cursor", cursor)
-    if (filter) url.searchParams.set("filter", filter)
-
     const client = getServerForumClient()
-    const data = await client.request(`${url.pathname}${url.search}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.users.getFollowing(id, {
+      ...(query && { query }),
+      ...(cursor && { cursor }),
+      ...(filter && { filter: filter as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch following", details: String(error) }, { status: 500 })

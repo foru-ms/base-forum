@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/private-message/${id}`, { method: "GET" })
+    const data = await client.privateMessages.retrieve(id)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Get message error:", error)
@@ -30,7 +30,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/private-message/${id}`, { method: "DELETE" })
+    const data = await client.privateMessages.delete(id)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Delete message error:", error)

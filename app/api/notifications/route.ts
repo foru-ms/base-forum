@@ -11,7 +11,14 @@ export async function GET(request: NextRequest) {
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request("/notifications", { method: "GET" })
+    const user = await client.auth.me()
+    const searchParams = request.nextUrl.searchParams
+    const data = await client.notifications.list({
+      userId: user.id,
+      ...(searchParams.get("read") && { read: searchParams.get("read") === "true" }),
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Notifications API error:", error)

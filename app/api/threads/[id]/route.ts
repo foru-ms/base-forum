@@ -7,7 +7,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params
 
     const client = getServerForumClient()
-    const data = await client.request(`/thread/${id}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.threads.retrieve(id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch thread", details: String(error) }, { status: 500 })

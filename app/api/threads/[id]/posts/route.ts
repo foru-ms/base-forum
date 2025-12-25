@@ -12,10 +12,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (searchParams.get("cursor")) queryParams.append("cursor", searchParams.get("cursor")!)
     if (searchParams.get("filter")) queryParams.append("filter", searchParams.get("filter")!)
 
-    const queryString = queryParams.toString() ? `?${queryParams.toString()}` : ""
-
     const client = getServerForumClient()
-    const data = await client.request(`/thread/${id}/posts${queryString}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.threads.getPosts(id, {
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[SERVER] Error fetching thread posts:", error)

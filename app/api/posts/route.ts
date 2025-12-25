@@ -13,7 +13,12 @@ export async function GET(request: NextRequest) {
     if (searchParams.get("limit")) params.append("limit", searchParams.get("limit")!)
 
     const client = getServerForumClient()
-    const data = await client.request(`/posts?${params.toString()}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.posts.list({
+      ...(searchParams.get("threadId") && { threadId: searchParams.get("threadId")! }),
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("limit") && { limit: parseInt(searchParams.get("limit")!) }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch posts", details: String(error) }, { status: 500 })

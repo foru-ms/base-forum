@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/integrations/${id}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.integrations.retrieve(id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch integration", details: String(error) }, { status: 500 })
@@ -28,7 +28,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       return NextResponse.json({ error: "Authentication required" }, { status: 401 })
     }
     const client = getServerForumClient(token)
-    await client.request(`/integrations/${id}`, { method: "DELETE" })
+    await client.integrations.delete(id)
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete integration", details: String(error) }, { status: 500 })

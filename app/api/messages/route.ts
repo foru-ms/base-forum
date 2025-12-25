@@ -11,7 +11,13 @@ export async function GET(request: NextRequest) {
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request("/private-messages", { method: "GET", cache: "no-store" } as any)
+    const searchParams = request.nextUrl.searchParams
+    const data = await client.privateMessages.list({
+      ...(searchParams.get("query") && { query: searchParams.get("query")! }),
+      ...(searchParams.get("userId") && { userId: searchParams.get("userId")! }),
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Messages API error:", error)
@@ -30,7 +36,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const client = getServerForumClient(token)
-    const data = await client.request("/private-messages", { method: "POST", body: JSON.stringify(body) })
+    const data = await client.privateMessages.create(body)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Send message error:", error)

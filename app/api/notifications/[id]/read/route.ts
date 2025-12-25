@@ -12,7 +12,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/notification/${id}/read`, { method: "PUT" })
+    const data = await client.notifications.update(id, { read: true })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Mark notification read error:", error)

@@ -15,10 +15,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/role/${id}`, {
-      method: "GET",
-      cache: "no-store",
-    })
+    const data = await client.roles.retrieve(id)
 
     return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } })
   } catch (error) {

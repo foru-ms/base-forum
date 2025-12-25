@@ -7,7 +7,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params
 
     const client = getServerForumClient()
-    const data = await client.request(`/post/${id}`, { method: "GET", cache: "no-store" } as any)
+    const data = await client.posts.retrieve(id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch post", details: String(error) }, { status: 500 })

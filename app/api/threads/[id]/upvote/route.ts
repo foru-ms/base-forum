@@ -13,7 +13,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     const body = await request.json().catch(() => ({}))
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/upvotes`, { method: "POST", body: JSON.stringify(body) })
+    const user = await client.auth.me()
+    const data = await client.threads.upvote(id, user.id, body.extendedData)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to upvote thread", details: String(error) }, { status: 500 })
@@ -30,7 +31,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/upvotes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.threads.unupvote(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove upvote", details: String(error) }, { status: 500 })

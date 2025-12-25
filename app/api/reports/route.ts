@@ -11,7 +11,14 @@ export async function GET(request: NextRequest) {
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request("/reports", { method: "GET" })
+    const searchParams = request.nextUrl.searchParams
+    const data = await client.reports.list({
+      ...(searchParams.get("reporterId") && { reporterId: searchParams.get("reporterId")! }),
+      ...(searchParams.get("reportedId") && { reportedId: searchParams.get("reportedId")! }),
+      ...(searchParams.get("read") && { read: searchParams.get("read") === "true" }),
+      ...(searchParams.get("cursor") && { cursor: searchParams.get("cursor")! }),
+      ...(searchParams.get("filter") && { filter: searchParams.get("filter")! as 'newest' | 'oldest' }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Reports API error:", error)
@@ -30,7 +37,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const client = getServerForumClient(token)
-    const data = await client.request("/reports", { method: "POST", body: JSON.stringify(body) })
+    const data = await client.reports.create(body)
     return NextResponse.json(data)
   } catch (error) {
     console.error("[v0] Create report error:", error)

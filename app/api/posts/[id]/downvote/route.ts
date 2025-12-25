@@ -12,7 +12,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const client = getServerForumClient(token)
-    const data = await client.posts.downvote(id)
+    const user = await client.auth.me()
+    const data = await client.posts.downvote(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to downvote post" }, { status: 500 })
@@ -29,7 +30,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/post/${id}/downvotes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.posts.undownvote(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to remove downvote" }, { status: 500 })

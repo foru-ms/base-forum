@@ -13,11 +13,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const url = new URL(`/webhooks/${id}/deliveries`, "http://internal")
-    if (cursor) url.searchParams.set("cursor", cursor)
-
     const client = getServerForumClient(token)
-    const data = await client.request(`${url.pathname}${url.search}`, { method: "GET" })
+    const data = await client.webhooks.getDeliveries(id, {
+      ...(cursor && { cursor }),
+    })
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch webhook deliveries" }, { status: 500 })

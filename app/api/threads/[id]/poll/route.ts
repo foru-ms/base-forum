@@ -7,7 +7,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
   try {
     const client = getServerForumClient()
-    const data = await client.request(`/thread/${id}/poll`, { method: "GET" })
+    const data = await client.threads.getPoll(id)
     return NextResponse.json(data)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to fetch poll" }, { status: 500 })

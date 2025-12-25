@@ -8,7 +8,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const token = request.headers.get("Authorization")?.replace("Bearer ", "")
 
     const client = getServerForumClient(token || undefined)
-    const data = await client.request(`/thread/${id}/poll/results`, { method: "GET" })
+    const data = await client.threads.getPoll(id)
 
     return NextResponse.json(data)
   } catch (error) {

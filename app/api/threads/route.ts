@@ -25,10 +25,11 @@ export async function GET(request: NextRequest) {
     if (pinned) params.append("pinned", pinned)
 
     const client = getServerForumClient()
-    const data = await client.request(`/threads?${params.toString()}`, {
-      method: "GET",
-      next: { revalidate },
-    } as any)
+    const data = await client.threads.list({
+      limit: parseInt(limit),
+      filter: filter as 'newest' | 'oldest',
+      ...(tagId && { tagId }),
+    })
     return NextResponse.json(data, {
       headers: { "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=${revalidate}` },
     })

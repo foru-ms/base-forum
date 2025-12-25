@@ -13,7 +13,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/poll/votes`, { method: "POST", body: JSON.stringify(body) })
+    const user = await client.auth.me()
+    const data = await client.threads.vote(id, user.id, body.optionId)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to cast vote" }, { status: 500 })
@@ -31,7 +32,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/poll/votes`, { method: "PUT", body: JSON.stringify(body) })
+    const user = await client.auth.me()
+    const data = await client.threads.voteUpdate(id, user.id, body.optionId)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to update vote" }, { status: 500 })
@@ -48,7 +50,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     const client = getServerForumClient(token)
-    const data = await client.request(`/thread/${id}/poll/votes`, { method: "DELETE" })
+    const user = await client.auth.me()
+    const data = await client.threads.unvote(id, user.id)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete vote" }, { status: 500 })
