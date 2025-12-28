@@ -7,7 +7,7 @@ import { ThreadCard } from "@/components/thread-card"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ForumAPI } from "@/lib/api"
 import { Loader2, Search } from "lucide-react"
 import Link from "next/link"
@@ -119,8 +119,7 @@ export default function SearchPage() {
                             <Card className="hover:border-primary/50 transition-colors cursor-pointer">
                               <CardContent className="py-4 flex items-center gap-3">
                                 <Avatar>
-                                  <AvatarImage src={user.image || "/placeholder.svg"} alt={`${user.username} avatar`} />
-                                  <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                                  <AvatarFallback>{(user.displayName || user.username)[0].toUpperCase()}</AvatarFallback>
                                 </Avatar>
                                 <div>
                                   <p className="font-semibold">{user.displayName || user.username}</p>
@@ -219,8 +218,7 @@ export default function SearchPage() {
                         <Card className="hover:border-primary/50 transition-colors cursor-pointer">
                           <CardContent className="py-4 flex items-center gap-3">
                             <Avatar>
-                              <AvatarImage src={user.image || "/placeholder.svg"} alt={`${user.username} avatar`} />
-                              <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                              <AvatarFallback>{(user.displayName || user.username)[0].toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div>
                               <p className="font-semibold">{user.displayName || user.username}</p>

@@ -3,7 +3,7 @@
 import React, { memo, type KeyboardEvent, type MouseEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { ThumbsUp, MessageSquare, Pin, Lock } from "lucide-react"
@@ -93,7 +93,6 @@ function ThreadCardComponent({ thread }: { thread: Thread }) {
               onKeyDown={handleUserKeyDown}
             >
               <Avatar className="h-6 w-6">
-                <AvatarImage src={thread.user.avatar || "/placeholder.svg"} alt={`${thread.user.username} avatar`} />
                 <AvatarFallback>{thread.user.username[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <span className="text-muted-foreground">{thread.user.username}</span>

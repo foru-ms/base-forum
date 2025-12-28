@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { ForumHeader } from "@/components/forum-header"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ForumAPI } from "@/lib/api"
@@ -93,8 +93,7 @@ export default function UsersPage() {
                       <CardContent className="pt-6">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-12 w-12">
-                            <AvatarImage src={user.image || "/placeholder.svg"} alt={`${user.username} avatar`} />
-                            <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>{(user.displayName || user.username)[0].toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold truncate">{user.displayName || user.username}</p>

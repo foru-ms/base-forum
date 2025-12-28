@@ -6,7 +6,7 @@ import { ReplyForm } from "@/components/reply-form"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ForumAPI } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { Loader2, ThumbsDown, Lock, Pin, ArrowLeft, Heart } from "lucide-react"
@@ -140,7 +140,6 @@ export function ThreadContent({ threadId }: { threadId: string }) {
           <CardHeader>
             <div className="flex items-start gap-3 mb-4">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={thread.user?.avatar || "/placeholder.svg"} alt={`${thread.user?.username || "User"} avatar`} />
                 <AvatarFallback>{thread.user?.username?.[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="flex-1">

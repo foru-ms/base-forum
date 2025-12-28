@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, memo } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { MoreVertical, Flag, CheckCircle, Heart, ThumbsDown } from "lucide-react"
@@ -126,7 +126,6 @@ function PostCardComponent({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={post.user?.avatar || "/placeholder.svg"} alt={`${post.user?.username || "User"} avatar`} />
               <AvatarFallback>{post.user?.username?.[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
