@@ -65,7 +65,7 @@ export default function HomePage() {
                 A modern, privacy-focused forum solution for customer support and community building.
               </p>
             </div>
-            {user && <CreateThreadDialog onSuccess={loadThreads} />}
+            {user && <CreateThreadDialog onSuccess={() => loadThreads(undefined, false)} />}
           </div>
 
           <div className="mb-6">
@@ -85,7 +85,7 @@ export default function HomePage() {
           ) : threads.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">No threads yet. Be the first to start a discussion!</p>
-              {user && <CreateThreadDialog onSuccess={loadThreads} />}
+              {user && <CreateThreadDialog onSuccess={() => loadThreads(undefined, false)} />}
             </div>
           ) : (
             <>
